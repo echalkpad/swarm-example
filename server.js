@@ -45,6 +45,14 @@ var fileStorage = new Swarm.FileStorage(argv.store);
 app.swarmHost = new Swarm.Host('swarm~nodejs', 0, fileStorage);
 Swarm.env.localhost = app.swarmHost;
 
+var apiHandler = require('swarm-restapi').createHandler({
+    route: '/api',
+    host: app.swarmHost
+});
+app.get(/^\/api\//, apiHandler);
+app.post(/^\/api\//, apiHandler);
+app.put(/^\/api\//, apiHandler);
+
 // start the HTTP server
 var httpServer = http.createServer(app);
 
@@ -65,6 +73,9 @@ var wsServer = new ws_lib.Server({
 wsServer.on('connection', function (ws) {
     var params = url.parse(ws.upgradeReq.url, true);
     console.log('incomingWS %s', params.path, ws.upgradeReq.connection.remoteAddress);
+    if (!app.swarmHost) {
+        return ws.close();
+    }
     app.swarmHost.accept(new EinarosWSStream(ws), { delay: 50 });
 });
 
@@ -72,9 +83,20 @@ process.on('SIGTERM', onExit);
 process.on('SIGINT', onExit);
 process.on('SIGQUIT', onExit);
 
+process.on('uncaughtException', function (err) {
+    console.error('Uncaught Exception: ', err, err.stack);
+    onExit(2);
+});
+
 function onExit(exitCode) {
     console.log('shutting down http-server...');
     httpServer.close();
+    api.close();
+
+    if (!app.swarmHost) {
+        console.log('swarm host not created yet...');
+        return process.exit(exitCode);
+    }
 
     console.log('closing swarm host...');
     var forcedExit = setTimeout(function () {

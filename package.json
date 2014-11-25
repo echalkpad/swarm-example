@@ -23,7 +23,8 @@
     "minimist": "^1.1.0",
     "react": "^0.11.2",
     "reactify": "^0.14.0",
-    "swarm": "^0.3.21",
+    "swarm": "^0.3.24",
+    "swarm-restapi": "^0.3.24",
     "ws": "^0.4.32"
   },
   "browserify": {
