@@ -91,7 +91,6 @@ process.on('uncaughtException', function (err) {
 function onExit(exitCode) {
     console.log('shutting down http-server...');
     httpServer.close();
-    api.close();
 
     if (!app.swarmHost) {
         console.log('swarm host not created yet...');
