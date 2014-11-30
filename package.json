@@ -1,6 +1,6 @@
 {
   "name": "swarm-example",
-  "version": "0.3.21",
+  "version": "0.3.22",
   "repository": {
     "type": "git",
     "url": "https://github.com/swarmjs/swarm-example.git"
@@ -8,8 +8,8 @@
   "description": "swarm js lib usage examples",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "prestart": "make dist",
+    "start": "node server.js --models=mice/model:conf/model --port:8000"
   },
   "keywords": [
     "swarm",
@@ -40,9 +40,5 @@
   },
   "browserify-shim": {
     "react": "global:React"
-  },
-  "scripts": {
-    "prestart": "make dist",
-    "start": "node server.js --models=mice/model:conf/model --port:8000"
   }
 }
